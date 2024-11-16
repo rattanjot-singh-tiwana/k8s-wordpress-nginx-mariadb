@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  namespace: db
+  labels:
+    id: c0905659
+    app: wp
+    env: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      id: c0905659
+      app: db
+      env: dev
+      
+  template:
+    metadata:
+      name: db
+      labels:
+        id: c0905659
+        app: db
+        env: dev
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:10.6.4-focal
+          env:
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: MYSQL_ROOT_PASSWORD
+          ports:
+            - containerPort: 3306
+            
+          

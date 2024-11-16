@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wp-deployment
+  namespace: wp
+  labels:
+    id: c0905659
+    app: wp
+    env: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      id: c0905659
+      app: wp
+      env: dev
+      
+  template:
+    metadata:
+      name: wp
+      labels:
+        id: c0905659
+        app: wp
+        env: dev
+    spec:
+      containers:
+        - name: wordpress
+          image: wordpress:latest
+          env:
+            - name: WORDPRESS_DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: wp-config
+                  key: WORDPRESS_DB_USER
+            - name: WORDPRESS_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: wp-config
+                  key: WORDPRESS_DB_NAME
+            - name: WORDPRESS_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: wp-config
+                  key: WORDPRESS_DB_HOST
+            - name: WORDPRESS_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wp-secret
+                  key: WORDPRESS_DB_PASSWORD
+          ports:
+            - containerPort: 80
+            
+          
